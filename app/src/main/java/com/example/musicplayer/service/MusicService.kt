@@ -58,6 +58,7 @@ class MusicService : MediaLibraryService() {
         fun getPlayer() = player
         fun getService() = this@MusicService
     }
+
     private val binder = LocalBinder()
 
     companion object {
@@ -304,5 +305,8 @@ class MusicService : MediaLibraryService() {
     }
 
 }
+
+
+
 
 

@@ -6,9 +6,13 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+
 android {
     namespace = "com.example.musicplayer"
     compileSdk = 34
+
+    val googleApiKey: String = project.findProperty("GOOGLE_API_KEY")?.toString() ?: ""
+
 
     defaultConfig {
         applicationId = "com.example.musicplayer"
@@ -16,6 +20,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -66,16 +71,10 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
 
-    // ML Kit for Text Sentiment Analysis (On-Device)
-    implementation("com.google.mlkit:natural-language:16.0.1")
-    implementation("com.google.mlkit:language-id-common:16.0.1")
-    implementation("com.google.mlkit:text-classification:16.0.1")
-    implementation ("com.google.mlkit:sentiment-analysis:16.0.1")
 
 
-    // Retrofit for Lyrics API (Optional)
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")

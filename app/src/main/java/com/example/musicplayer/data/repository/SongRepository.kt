@@ -7,11 +7,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import com.example.musicplayer.data.analyzer.SentimentAnalyzer
 import com.example.musicplayer.data.local.SongDao
 import com.example.musicplayer.data.model.Song
 import com.example.musicplayer.data.model.SongCategory
-import com.example.musicplayer.data.remote.LyricsApiService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,13 +22,13 @@ import javax.inject.Singleton
 @Singleton
 class SongRepository @Inject constructor(
     private val songDao: SongDao,
-    private val lyricsApi: LyricsApiService,
-    private val sentimentAnalyzer: SentimentAnalyzer,
+
     @ApplicationContext private val context: Context
 ) {
     fun getAllSongs(): Flow<List<Song>> = songDao.getAllSongs()
 
-    fun getWhatsAppAudios(): Flow<List<Song>> = songDao.getSongsByCategory(SongCategory.WHATSAPP_AUDIO)
+    fun getWhatsAppAudios(): Flow<List<Song>> =
+        songDao.getSongsByCategory(SongCategory.WHATSAPP_AUDIO)
 
     fun getDownloadedSongs(): Flow<List<Song>> = songDao.getSongsByCategory(SongCategory.DOWNLOADED)
 
@@ -39,21 +37,6 @@ class SongRepository @Inject constructor(
     fun getLikedSongs(): Flow<List<Song>> = songDao.getFavoriteSongs()
 
     fun searchSongs(query: String): Flow<List<Song>> = songDao.searchSongs(query)
-
-    suspend fun fetchAndAnalyzeLyrics(song: Song): Song {
-        return try {
-            // Step 1: Fetch lyrics
-            val lyrics = lyricsApi.getLyrics(song.title, song.artist).lyrics
-
-            // Step 2: Analyze sentiment
-            val sentiment = sentimentAnalyzer.analyzeLyrics(lyrics)
-
-            // Step 3: Return updated song
-            song.copy(lyrics = lyrics, sentiment = sentiment)
-        } catch (e: Exception) {
-            song.copy(sentiment = "unknown")
-        }
-    }
 
     suspend fun toggleFavorite(songId: Long, isFavorite: Boolean) {
         songDao.updateFavoriteStatus(songId, isFavorite)
@@ -87,7 +70,8 @@ class SongRepository @Inject constructor(
                 MediaStore.Audio.Media.DATE_ADDED
             )
 
-            val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0 OR ${MediaStore.Audio.Media.MIME_TYPE} LIKE 'audio/%'"
+            val selection =
+                "${MediaStore.Audio.Media.IS_MUSIC} != 0 OR ${MediaStore.Audio.Media.MIME_TYPE} LIKE 'audio/%'"
 
             context.contentResolver.query(
                 collection,
@@ -103,7 +87,8 @@ class SongRepository @Inject constructor(
                 val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
                 val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
                 val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
-                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
+                val dateAddedColumn =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
 
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
@@ -146,18 +131,27 @@ class SongRepository @Inject constructor(
         return when {
             // WhatsApp audio files are typically stored in WhatsApp/Media/WhatsApp Audio
             path.contains("WhatsApp/Media/WhatsApp Audio", ignoreCase = true) ||
-                    path.contains("WhatsApp Audio", ignoreCase = true) -> SongCategory.WHATSAPP_AUDIO
+                    path.contains(
+                        "WhatsApp Audio",
+                        ignoreCase = true
+                    ) -> SongCategory.WHATSAPP_AUDIO
 
             // Downloaded files are typically in the Download directory
             path.contains("/Download/", ignoreCase = true) ||
-                    path.contains(Environment.DIRECTORY_DOWNLOADS, ignoreCase = true) -> SongCategory.DOWNLOADED
+                    path.contains(
+                        Environment.DIRECTORY_DOWNLOADS,
+                        ignoreCase = true
+                    ) -> SongCategory.DOWNLOADED
 
             // Recorded audio files are typically in DCIM/Sound recordings or similar
             path.contains("/Recording", ignoreCase = true) ||
                     path.contains("/record", ignoreCase = true) ||
                     path.contains("/Voice Recorder", ignoreCase = true) ||
                     path.contains("/Sounds", ignoreCase = true) ||
-                    path.contains("/DCIM/", ignoreCase = true) && path.endsWith(".m4a", ignoreCase = true) -> SongCategory.RECORDED
+                    path.contains("/DCIM/", ignoreCase = true) && path.endsWith(
+                ".m4a",
+                ignoreCase = true
+            ) -> SongCategory.RECORDED
 
             // All other audio files
             else -> SongCategory.OTHER

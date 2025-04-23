@@ -1,8 +1,10 @@
 package com.example.musicplayer.data.model
 
 import android.net.Uri
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.versionedparcelable.ParcelField
 import androidx.versionedparcelable.VersionedParcelize
 
 enum class SongCategory {
@@ -11,7 +13,7 @@ enum class SongCategory {
     RECORDED,
     OTHER
 }
-@VersionedParcelize
+
 @Entity(tableName = "songs")
 data class Song(
     @PrimaryKey val id: Long,
@@ -19,11 +21,8 @@ data class Song(
     val artist: String,
     val album: String,
     val duration: Long,
-
-    val sentiment: String? = null,
     val albumArtUri: String?,
     val path: String,
-
     val isFavorite: Boolean = false,
     val playCount: Int = 0,
     val dateAdded: Long = System.currentTimeMillis(),

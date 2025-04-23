@@ -1,23 +1,15 @@
 package com.example.musicplayer.ui.viewmodel
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import androidx.core.app.ServiceCompat.stopForeground
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.offline.DownloadService.startForeground
 import com.example.musicplayer.data.model.Song
 import com.example.musicplayer.data.repository.SongRepository
-import com.example.musicplayer.service.MusicService
-import com.example.musicplayer.service.MusicService.Companion.NOTIFICATION_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,12 +18,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class MusicViewModel @Inject constructor(
     private val songRepository: SongRepository,
-    private val player: ExoPlayer,
-    @ApplicationContext private val context: Context
+    private val player: ExoPlayer
 ) : ViewModel() {
 
     private val _songs = MutableStateFlow<List<Song>>(emptyList())
@@ -69,7 +59,6 @@ class MusicViewModel @Inject constructor(
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
     private val _searchResults = MutableStateFlow<List<Song>>(emptyList())
     val searchResults: StateFlow<List<Song>> = _searchResults.asStateFlow()
 
@@ -80,7 +69,21 @@ class MusicViewModel @Inject constructor(
         loadInitialData()
         setupPlayerListener()
         startProgressUpdates()
+        player.addListener(object : Player.Listener {
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                super.onMediaItemTransition(mediaItem, reason)
+                updateCurrentSong()
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_READY && _currentSong.value == null) {
+                    updateCurrentSong()
+                }
+            }
+        })
     }
+
+
 
     private fun loadInitialData() {
         viewModelScope.launch {
@@ -100,11 +103,6 @@ class MusicViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentPlayingSong(): Song? {
-        return player.currentMediaItem?.mediaId?.toLongOrNull()?.let { songId ->
-            _songs.value.find { it.id == songId }
-        }
-    }
     private fun setupPlayerListener() {
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -115,7 +113,7 @@ class MusicViewModel @Inject constructor(
                         _isPlaying.value = player.playWhenReady
                         // Ensure current song is set when player is ready
                         if (_currentSong.value == null) {
-                            updateCurrentSong()
+                            updateCurrentSongFromPlayer()
                         }
                     }
                     Player.STATE_ENDED -> _isPlaying.value = false
@@ -125,7 +123,7 @@ class MusicViewModel @Inject constructor(
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                updateCurrentSong()
+                updateCurrentSongFromPlayer()
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -142,21 +140,21 @@ class MusicViewModel @Inject constructor(
         })
     }
 
-    fun onSongPlayed(song: Song) {
-        viewModelScope.launch {
-            val analyzedSong = songRepository.fetchAndAnalyzeLyrics(song)
-            _currentSong.value = analyzedSong
-
-            // Optional: Save to DB
-
+    private fun updateCurrentSongFromPlayer() {
+        player.currentMediaItem?.mediaId?.toLongOrNull()?.let { songId ->
+            _songs.value.find { it.id == songId }?.let { song ->
+                _currentSong.value = song
+                viewModelScope.launch {
+                    songRepository.incrementPlayCount(songId)
+                }
+            }
         }
     }
-
-    fun updateCurrentSong() {
+    internal fun updateCurrentSong() {
         viewModelScope.launch {
             player.currentMediaItem?.mediaId?.toLongOrNull()?.let { songId ->
                 val allSongs = _songs.value + _whatsappAudios.value +
-                        _downloadedSongs.value + _recordedAudios.value + _likedSongs.value
+                        _downloadedSongs.value + _recordedAudios.value
                 allSongs.find { it.id == songId }?.let { song ->
                     _currentSong.value = song
                 }
@@ -180,7 +178,6 @@ class MusicViewModel @Inject constructor(
         // Set current song immediately before preparing player
         _currentSong.value = song
 
-        updateNotification(song)
         player.stop()
         player.clearMediaItems()
         songList.forEach { s ->

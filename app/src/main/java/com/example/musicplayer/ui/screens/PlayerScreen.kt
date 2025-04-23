@@ -314,19 +314,7 @@ fun PlayerScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        currentSong?.sentiment?.let { sentiment ->
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = when (sentiment) {
-                                        "happy" -> Icons.Default.Mood
-                                        "sad" -> Icons.Default.MoodBad
-                                        else -> Icons.Default.SentimentNeutral
-                                    },
-                                    contentDescription = "Mood"
-                                )
-                                Text("This song feels ${sentiment.uppercase()}")
-                            }
-                        }
+
                         // Main controls
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -482,6 +470,7 @@ fun PlayerScreen(
         }
     }
 }
+
 @Composable
 private fun sliderColors() = androidx.compose.material3.SliderDefaults.colors(
     thumbColor = MaterialTheme.colorScheme.primary,

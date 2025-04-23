@@ -61,14 +61,13 @@ fun CategoryScreen(
     val playlists by playlistViewModel.playlists.collectAsState()
 
 
-
     val navController = rememberNavController()
     var showPlayerScreen by remember { mutableStateOf(false) }
     var showAddToPlaylistDialog by remember { mutableStateOf(false) }
     var showCreatePlaylistDialog by remember { mutableStateOf(false) }
-    var selectedSong by remember { mutableStateOf<com.example.musicplayer.data.model.Song?>(null)}
-        val currentDestination by navController.currentBackStackEntryAsState()
-        val currentRoute = currentDestination?.destination?.route
+    var selectedSong by remember { mutableStateOf<com.example.musicplayer.data.model.Song?>(null) }
+    val currentDestination by navController.currentBackStackEntryAsState()
+    val currentRoute = currentDestination?.destination?.route
 
 
     val isPlayerScreenVisible by remember {
@@ -89,17 +88,17 @@ fun CategoryScreen(
         },
         bottomBar = {
 
-            if (currentRoute !="player"){
-            if (currentSong != null) {
-                MiniPlayer(
-                    song = currentSong!!,
-                    isPlaying = isPlaying,
-                    onPlayPause = { musicViewModel.togglePlayPause() },
-                    modifier = Modifier.fillMaxWidth(),
-                    musicViewModel = musicViewModel,
-                    onExpand = { navController.navigate("player")}
-                )
-            }
+            if (currentRoute != "player") {
+                if (currentSong != null) {
+                    MiniPlayer(
+                        song = currentSong!!,
+                        isPlaying = isPlaying,
+                        onPlayPause = { musicViewModel.togglePlayPause() },
+                        modifier = Modifier.fillMaxWidth(),
+                        musicViewModel = musicViewModel,
+                        onExpand = { navController.navigate("player") }
+                    )
+                }
 
             }
         }

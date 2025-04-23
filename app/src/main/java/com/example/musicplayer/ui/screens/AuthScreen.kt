@@ -98,6 +98,7 @@ fun AuthScreen(
                         viewModel.signIn(email, password)
                     }
                 )
+
                 1 -> SignUpForm(
                     isLoading = authState is AuthViewModel.AuthState.Loading,
                     onSignUp = { email, password, displayName ->

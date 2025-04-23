@@ -117,19 +117,19 @@ fun HomeScreen(
         },
         bottomBar = {
 
-                Column {
-                    if (currentSong != null)
-                        MiniPlayer(
-                            song = currentSong!!,
-                            isPlaying = isPlaying,
-                            onPlayPause = { musicViewModel.togglePlayPause() },
-                            onExpand = { showPlayerScreen = true },
-                            modifier = Modifier.fillMaxWidth(),
+            Column {
+                if (currentSong != null)
+                    MiniPlayer(
+                        song = currentSong!!,
+                        isPlaying = isPlaying,
+                        onPlayPause = { musicViewModel.togglePlayPause() },
+                        onExpand = { showPlayerScreen = true },
+                        modifier = Modifier.fillMaxWidth(),
 
-                            )
+                        )
 
-                    BottomNavBar(navController = navController)
-                }
+                BottomNavBar(navController = navController)
+            }
 
         },
         floatingActionButton = {
@@ -229,41 +229,41 @@ fun HomeScreen(
 
                 // WhatsApp Audios Section
 
+                item {
+                    CategoryHeader(
+                        title = "WhatsApp Audios",
+                        icon = Icons.Default.Whatsapp,
+                        iconTint = Color(0xFF25D366) // WhatsApp green
+                    )
+                }
+
+                items(whatsappAudios.take(5)) { song ->
+                    SongItem(
+                        song = song,
+                        onClick = {
+                            musicViewModel.playSong(song, whatsappAudios)
+                            onNavigateToPlayer()
+                        },
+                        onFavoriteClick = { musicViewModel.toggleFavorite(song) },
+                        onAddToPlaylistClick = {
+                            selectedSong = song
+                            showAddToPlaylistDialog = true
+                        },
+                        showAddToPlaylistOption = true
+                    )
+                }
+
+                if (whatsappAudios.size > 5) {
                     item {
-                        CategoryHeader(
-                            title = "WhatsApp Audios",
-                            icon = Icons.Default.Whatsapp,
-                            iconTint = Color(0xFF25D366) // WhatsApp green
-                        )
-                    }
-
-                    items(whatsappAudios.take(5)) { song ->
-                        SongItem(
-                            song = song,
-                            onClick = {
-                                musicViewModel.playSong(song, whatsappAudios)
-                                onNavigateToPlayer()
-                            },
-                            onFavoriteClick = { musicViewModel.toggleFavorite(song) },
-                            onAddToPlaylistClick = {
-                                selectedSong = song
-                                showAddToPlaylistDialog = true
-                            },
-                            showAddToPlaylistOption = true
-                        )
-                    }
-
-                    if (whatsappAudios.size > 5) {
-                        item {
-                            TextButton(
-                                onClick = { navController.navigate("category/whatsapp") },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                            ) {
-                                Text("View All WhatsApp Audios (${whatsappAudios.size})")
-                            }
+                        TextButton(
+                            onClick = { navController.navigate("category/whatsapp") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Text("View All WhatsApp Audios (${whatsappAudios.size})")
                         }
+                    }
                 }
                 item {
                     Divider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))

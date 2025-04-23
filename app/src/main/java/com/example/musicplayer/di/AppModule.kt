@@ -7,9 +7,9 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.room.Room
-import com.example.musicplayer.data.analyzer.SentimentAnalyzer
+
 import com.example.musicplayer.data.local.MusicDatabase
-import com.example.musicplayer.data.remote.LyricsApiService
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
@@ -24,20 +24,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides
-    fun provideSentimentAnalyzer(context: Context): SentimentAnalyzer {
-        return SentimentAnalyzer(context)
-    }
-
-    @Provides
-    fun provideLyricsApiService(): LyricsApiService {
-        return Retrofit.Builder()
-            .baseUrl("https://your-lyrics-api.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(LyricsApiService::class.java)
-    }
 
     @Provides
     @Singleton
