@@ -173,15 +173,15 @@ fun PlayerScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            MaterialTheme.colorScheme.background
-                        )
-                    )
-                )
+
         ) {
+            // 🌄 Background image
+            Image(
+                painter = painterResource(id = R.drawable.home),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -275,6 +275,8 @@ fun PlayerScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.fillMaxWidth()
                             )
+
+
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))

@@ -8,14 +8,18 @@ import androidx.compose.material.icons.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.musicplayer.ui.theme.Maroon30
 
 @Composable
 fun BottomNavBar(
@@ -49,12 +53,23 @@ fun BottomNavBar(
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
-        modifier = modifier
+        modifier = modifier,
+        containerColor = Color.Transparent,
+        tonalElevation = 0.dp,
+        contentColor = Color.White
     ) {
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.name) },
+                icon = { Icon(item.icon, contentDescription = item.name,
+                    tint = if (currentRoute == item.route) {
+                        MaterialTheme.colorScheme.primary // Highlight selected item
+                    } else {
+                        Color.White.copy(alpha = 0.8f) // Semi-transparent white for unselected
+                    }
+                )
+                       },
                 label = { Text(text = item.name) },
+
                 selected = currentRoute == item.route,
                 onClick = {
                     if (currentRoute != item.route) {

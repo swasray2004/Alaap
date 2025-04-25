@@ -1,5 +1,7 @@
 package com.example.musicplayer.ui.screens
 
+import android.R.attr.duration
+import android.R.attr.progress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,6 +44,7 @@ import com.example.musicplayer.ui.viewmodel.PlaylistViewModel
 fun CategoryScreen(
     category: SongCategory,
     categoryTitle: String,
+
     onNavigateUp: () -> Unit,
     onNavigateToPlayer: () -> Unit,
     musicViewModel: MusicViewModel = hiltViewModel(),
@@ -59,8 +62,8 @@ fun CategoryScreen(
     val currentSong by musicViewModel.currentSong.collectAsState()
     val isPlaying by musicViewModel.isPlaying.collectAsState()
     val playlists by playlistViewModel.playlists.collectAsState()
-
-
+    val progress by musicViewModel.progress.collectAsState()
+    val duration by musicViewModel.duration.collectAsState()
     val navController = rememberNavController()
     var showPlayerScreen by remember { mutableStateOf(false) }
     var showAddToPlaylistDialog by remember { mutableStateOf(false) }
@@ -94,9 +97,12 @@ fun CategoryScreen(
                         song = currentSong!!,
                         isPlaying = isPlaying,
                         onPlayPause = { musicViewModel.togglePlayPause() },
+                        onExpand = { showPlayerScreen = true },
+                        progress = progress, // Pass progress
+                        duration = duration, // Pass duration
+                        onSeek = { musicViewModel.seekTo((it * duration).toLong()) }, // Handle seek
                         modifier = Modifier.fillMaxWidth(),
                         musicViewModel = musicViewModel,
-                        onExpand = { navController.navigate("player") }
                     )
                 }
 

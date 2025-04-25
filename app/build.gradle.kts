@@ -72,8 +72,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
 
 
-
-
+    implementation ("androidx.palette:palette-ktx:1.0.0")
 
 
     // Navigation
@@ -91,6 +90,8 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1") // Changed from kapt to ksp
+
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))

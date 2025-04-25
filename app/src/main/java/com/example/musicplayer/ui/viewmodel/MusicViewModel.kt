@@ -1,6 +1,8 @@
 package com.example.musicplayer.ui.viewmodel
 
 import android.net.Uri
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SliderDefaults
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -287,6 +289,7 @@ class MusicViewModel @Inject constructor(
             _duration.value = player.duration
         }
     }
+
 
     private fun createMediaItem(song: Song): MediaItem {
         return MediaItem.Builder()

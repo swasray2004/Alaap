@@ -1,10 +1,14 @@
 package com.example.musicplayer.ui.screens
 
 import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,17 +35,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.musicplayer.ui.viewmodel.AuthViewModel
+import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storage
+import kotlinx.coroutines.launch
 
 
 import kotlinx.coroutines.tasks.await
@@ -52,38 +62,25 @@ fun ProfileScreen(
     onNavigateUp: () -> Unit,
     onSignOut: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
+
 ) {
     val currentUser by viewModel.currentUser.collectAsState()
     val authState by viewModel.authState.collectAsState()
-
     var displayName by remember { mutableStateOf(currentUser?.displayName ?: "") }
     var photoUrl by remember { mutableStateOf(currentUser?.photoUrl?.toString() ?: "") }
     var isEditing by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    val storage = FirebaseStorage.getInstance()
-
+    // Image picker launcher
     val pickImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Upload image to Firebase Storage
-            val imageRef = storage.reference.child("profile_images/${UUID.randomUUID()}")
-            val uploadTask = imageRef.putFile(it)
-
-            uploadTask.continueWithTask { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.let { throw it }
-                }
-                imageRef.downloadUrl
-            }.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val downloadUri = task.result
-                    photoUrl = downloadUri.toString()
-                }
-            }
+            // Use selected image URI directly
+            photoUrl = it.toString()
         }
+
     }
+
 
     Scaffold(
         topBar = {
@@ -102,6 +99,12 @@ fun ProfileScreen(
             )
         }
     ) { padding ->
+        Image(
+            painter = painterResource(id = com.example.musicplayer.R.drawable.home),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -112,7 +115,7 @@ fun ProfileScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Profile image
+            // Profile Image
             AsyncImage(
                 model = photoUrl.ifEmpty { "https://via.placeholder.com/150" },
                 contentDescription = "Profile Picture",

@@ -1,5 +1,8 @@
 package com.example.musicplayer.ui.screens
 
+import android.R.attr.duration
+import android.R.attr.progress
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +53,8 @@ import com.example.musicplayer.ui.viewmodel.MusicViewModel
 import com.example.musicplayer.ui.viewmodel.PlaylistViewModel
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.ui.res.painterResource
+import com.example.musicplayer.R
 import com.example.musicplayer.ui.components.AddSongsToPlaylistDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +71,8 @@ fun PlaylistDetailScreen(
     val playlistSongs by playlistViewModel.currentPlaylistSongs.collectAsState()
     val currentSong by musicViewModel.currentSong.collectAsState()
     val isPlaying by musicViewModel.isPlaying.collectAsState()
-
+    val progress by musicViewModel.progress.collectAsState()
+    val duration by musicViewModel.duration.collectAsState()
     var showPlayerScreen by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showAddSongsDialog by remember { mutableStateOf(false) }
@@ -101,9 +107,12 @@ fun PlaylistDetailScreen(
                     song = currentSong!!,
                     isPlaying = isPlaying,
                     onPlayPause = { musicViewModel.togglePlayPause() },
-
+                    onExpand = { showPlayerScreen = true },
+                    progress = progress, // Pass progress
+                    duration = duration, // Pass duration
+                    onSeek = { musicViewModel.seekTo((it * duration).toLong()) }, // Handle seek
                     modifier = Modifier.fillMaxWidth(),
-                    onExpand = { showPlayerScreen = true }
+                    musicViewModel = musicViewModel,
                 )
             }
         }
@@ -115,6 +124,13 @@ fun PlaylistDetailScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
+                // 🌄 Background Image
+                Image(
+                    painter = painterResource(id = R.drawable.home),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center

@@ -1,5 +1,6 @@
 package com.example.musicplayer.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +29,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.RadioButton
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import com.example.musicplayer.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +58,14 @@ fun SettingsScreen(
             )
         }
     ) { padding ->
+
+        // 🌄 Background image
+        Image(
+            painter = painterResource(id = R.drawable.home),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()

@@ -1,6 +1,7 @@
 package com.example.musicplayer
 
 import android.Manifest
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,20 +11,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.musicplayer.data.model.SongCategory
 import com.example.musicplayer.ui.screens.AuthScreen
 import com.example.musicplayer.ui.screens.CategoryScreen
@@ -34,6 +33,7 @@ import com.example.musicplayer.ui.screens.PlaylistsScreen
 import com.example.musicplayer.ui.screens.ProfileScreen
 import com.example.musicplayer.ui.screens.SearchScreen
 import com.example.musicplayer.ui.screens.SettingsScreen
+import com.example.musicplayer.ui.screens.SplashScreen
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
 import com.example.musicplayer.ui.viewmodel.AuthViewModel
 import com.example.musicplayer.ui.viewmodel.MusicViewModel
@@ -55,12 +55,21 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
         FirebaseApp.initializeApp(this)
         requestPermissions()
 
+
+
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+        window.decorView.systemUiVisibility = (
+                android.view.View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                        android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                )
         setContent {
             MusicPlayerTheme {
                 Surface(
@@ -73,6 +82,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
     private fun requestPermissions() {
         val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -89,9 +99,7 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(navController: NavHostController) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val musicViewModel: MusicViewModel = hiltViewModel()
-
     val currentUser by authViewModel.currentUser.collectAsState()
-
 
 
     val isPlayerScreenVisible by remember {
@@ -101,13 +109,19 @@ fun AppNavigation(navController: NavHostController) {
     }
     NavHost(
         navController = navController,
-        startDestination = if (currentUser != null) "home" else "auth"
+        startDestination = "splash"
     ) {
+        composable("splash") {
+            SplashScreen(navController = navController, isLoggedIn = currentUser != null)
+        }
+
         composable("auth") {
             AuthScreen(
-                onNavigateToHome = { navController.navigate("home") {
-                    popUpTo("auth") { inclusive = true }
-                }}
+                onNavigateToHome = {
+                    navController.navigate("home") {
+                        popUpTo("auth") { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -117,7 +131,8 @@ fun AppNavigation(navController: NavHostController) {
                 onNavigateToPlaylist = { playlistId ->
                     navController.navigate("playlist/$playlistId")
                 },
-                navController = navController
+                navController = navController,
+                onNavigateToProfile = { navController.navigate("profile") }
             )
         }
 
@@ -167,7 +182,7 @@ fun AppNavigation(navController: NavHostController) {
             SearchScreen(
                 onNavigateUp = { navController.popBackStack() },
 
-                musicViewModel=musicViewModel
+                musicViewModel = musicViewModel
             )
         }
 

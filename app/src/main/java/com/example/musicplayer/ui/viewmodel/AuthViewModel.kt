@@ -15,6 +15,9 @@ class AuthViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
+    private val _photoUrl = MutableStateFlow<String?>(null)
+    val photoUrl: StateFlow<String?> = _photoUrl
+
     private val _authState = MutableStateFlow<AuthState>(AuthState.Initial)
     val authState: StateFlow<AuthState> = _authState
 
@@ -65,11 +68,12 @@ class AuthViewModel @Inject constructor(
         _authState.value = AuthState.Initial
     }
 
-    fun updateProfile(displayName: String?, photoUrl: String?) {
+    fun updateProfile(displayName: String?, photo: String?) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
+            _photoUrl.value = photo
 
-            userRepository.updateProfile(displayName, photoUrl)
+            userRepository.updateProfile(displayName, photo)
                 .onSuccess {
                     _currentUser.value = userRepository.currentUser
                     _authState.value = AuthState.Success
