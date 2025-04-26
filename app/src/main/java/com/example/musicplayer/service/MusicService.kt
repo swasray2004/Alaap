@@ -82,6 +82,9 @@ class MusicService : MediaLibraryService() {
         createNotificationChannel()
         initializePlayer()
         initializeMediaSession()
+        if (player.isPlaying) {  // Show notification if already playing
+            startForeground(NOTIFICATION_ID, buildNotification())
+        }
     }
 
     private fun initializePlayer() {
@@ -279,16 +282,42 @@ class MusicService : MediaLibraryService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
+
+        startForeground(NOTIFICATION_ID, buildNotification())
+
         intent?.action?.let { action ->
             when (action) {
-
-                ACTION_PLAY -> player.play()
-                ACTION_PAUSE -> player.pause()
-                ACTION_STOP -> stopSelf()
-                ACTION_NEXT -> player.seekToNextMediaItem()
-                ACTION_PREV -> player.seekToPreviousMediaItem()
+                ACTION_PLAY -> {
+                    player.play()
+                    // Ensure notification is shown when playback starts
+                    startForeground(NOTIFICATION_ID, buildNotification())
+                }
+                ACTION_PAUSE -> {
+                    player.pause()
+                    updateNotification() // Updates to show play button
+                }
+                ACTION_STOP -> {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
+                    stopSelf()
+                }
+                ACTION_NEXT -> {
+                    player.seekToNextMediaItem()
+                    // Update notification with new track info
+                    startForeground(NOTIFICATION_ID, buildNotification())
+                }
+                ACTION_PREV -> {
+                    player.seekToPreviousMediaItem()
+                    // Update notification with new track info
+                    startForeground(NOTIFICATION_ID, buildNotification())
+                }
             }
         }
+
+        // If no action but player is playing, ensure notification is shown
+        if (player.isPlaying) {
+            startForeground(NOTIFICATION_ID, buildNotification())
+        }
+
         return START_STICKY
     }
 

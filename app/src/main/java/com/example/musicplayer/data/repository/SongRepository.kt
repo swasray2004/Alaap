@@ -1,6 +1,5 @@
 package com.example.musicplayer.data.repository
 
-import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
@@ -13,9 +12,7 @@ import com.example.musicplayer.data.model.SongCategory
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -114,10 +111,11 @@ class SongRepository @Inject constructor(
                         artist = artist,
                         album = album,
                         duration = duration,
-                        path = path,
                         albumArtUri = albumArtUri.toString(),
+                        path = path,
                         dateAdded = dateAdded * 1000, // Convert to milliseconds
-                        category = category
+                        category = category,
+
                     )
                     songs.add(song)
                 }

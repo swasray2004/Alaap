@@ -47,6 +47,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -75,6 +76,7 @@ import coil.request.ImageRequest
 import com.example.musicplayer.R
 import com.example.musicplayer.ui.components.AddToPlaylistDialog
 import com.example.musicplayer.ui.components.CreatePlaylistDialog
+import com.example.musicplayer.ui.theme.Maroon30
 import com.example.musicplayer.ui.viewmodel.MusicViewModel
 import com.example.musicplayer.ui.viewmodel.PlaylistViewModel
 import java.util.concurrent.TimeUnit
@@ -131,6 +133,7 @@ fun PlayerScreen(
                         }
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(Maroon30),
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -248,36 +251,53 @@ fun PlayerScreen(
                 ) {
                     if (currentSong != null) {
                         // Song title and artist
-                        Column(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            Text(
-                                text = currentSong?.title ?: "",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = currentSong?.title ?: "",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(2.dp))
 
-                            Text(
-                                text = currentSong?.artist ?: "",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                                Text(
+                                    text = currentSong?.artist ?: "",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
 
-
+                            IconButton(
+                                onClick = { currentSong?.let { musicViewModel.toggleFavorite(it) } },
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    if (currentSong?.isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = "Favorite",
+                                    tint = if (currentSong?.isFavorite == true) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
                         }
+
 
                         Spacer(modifier = Modifier.height(24.dp))
 
@@ -360,7 +380,7 @@ fun PlayerScreen(
                                 modifier = Modifier
                                     .size(64.dp)
                                     .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary),
+                                    .background(Color.White),
                             ) {
                                 Icon(
                                     if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -409,18 +429,6 @@ fun PlayerScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Favorite button
-                        IconButton(
-                            onClick = { currentSong?.let { musicViewModel.toggleFavorite(it) } },
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                if (currentSong?.isFavorite == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorite",
-                                tint = if (currentSong?.isFavorite == true) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
                     } else {
                         // No song playing state
                         Column(
@@ -475,8 +483,8 @@ fun PlayerScreen(
 
 @Composable
 private fun sliderColors() = androidx.compose.material3.SliderDefaults.colors(
-    thumbColor = MaterialTheme.colorScheme.primary,
-    activeTrackColor = MaterialTheme.colorScheme.primary,
+    thumbColor = Color.White,
+    activeTrackColor = MaterialTheme.colorScheme.onSurface,
     inactiveTrackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.24f),
     activeTickColor = MaterialTheme.colorScheme.primary,
     inactiveTickColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.24f)

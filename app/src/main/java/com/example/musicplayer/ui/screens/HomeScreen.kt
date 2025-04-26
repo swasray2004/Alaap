@@ -1,6 +1,7 @@
 package com.example.musicplayer.ui.screens
 
 import PlaylistItem
+import android.R.attr.fontFamily
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -27,6 +28,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musicplayer.R
 import com.example.musicplayer.ui.components.*
@@ -34,6 +38,7 @@ import com.example.musicplayer.ui.theme.Maroon30
 import com.example.musicplayer.ui.viewmodel.AuthViewModel
 import com.example.musicplayer.ui.viewmodel.MusicViewModel
 import com.example.musicplayer.ui.viewmodel.PlaylistViewModel
+import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -55,6 +60,7 @@ fun HomeScreen(
     val progress by musicViewModel.progress.collectAsState()
     val duration by musicViewModel.duration.collectAsState()
 
+    val customFont = FontFamily(Font(R.font.babylonica))
     val isPlayerScreenVisible by remember {
         derivedStateOf {
             navController.currentDestination?.route == "player"
@@ -69,8 +75,14 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Alaap") },
+                title = { Text(
+                    text = "Alaap",
+                    fontSize = 30.sp,
+
+                    fontFamily = customFont,
+                ) },
                 colors = TopAppBarDefaults.topAppBarColors(Maroon30),
+
                 actions = {
                     IconButton(onClick = onNavigateToProfile) {
                         Icon(
@@ -123,6 +135,7 @@ fun HomeScreen(
                 contentPadding = PaddingValues(bottom = 100.dp)
             ) {
                 item {
+                    Spacer(modifier =Modifier.height(8.dp))
                     // Greeting with user's name
                     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
                         Text(
@@ -139,17 +152,9 @@ fun HomeScreen(
                             )
                         )
                     }
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { musicViewModel.searchSongs(it) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        placeholder = { Text("Search songs...") },
-                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                        singleLine = true
-                    )
+
                 }
+
 
                 if (likedSongs.isNotEmpty()) {
                     item {
@@ -189,9 +194,15 @@ fun HomeScreen(
                             }
                         }
                     }
+                    item {
 
-                    item { Spacer(modifier = Modifier.height(8.dp)) }
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                    }
+
                 }
+
+
 
                 item {
                     Column(
@@ -204,10 +215,18 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            CategoryCard("WhatsApp Audios", Icons.Default.Whatsapp, Color(0xFF25D366)) {
+                            CategoryCard(
+                                "WhatsApp Audios",
+                                Icons.Default.Whatsapp,
+                                Color(0xFF25D366)
+                            ) {
                                 navController.navigate("category/whatsapp")
                             }
-                            CategoryCard("Downloaded Music", Icons.Default.Download, Color(0xFF3F51B5)) {
+                            CategoryCard(
+                                "Downloaded Music",
+                                Icons.Default.Download,
+                                Color(0xFF3F51B5)
+                            ) {
                                 navController.navigate("category/downloaded")
                             }
                         }
@@ -224,6 +243,12 @@ fun HomeScreen(
                             }
                         }
                     }
+                    Spacer(modifier =Modifier.height(8.dp))
+                }
+
+                item {
+                    LastFmCard(navController = navController,Color(0xff094f12))
+
                 }
 
 
@@ -251,11 +276,13 @@ fun HomeScreen(
                 }
 
                 item {
+
                     Spacer(modifier = Modifier.height(32.dp))
                     Divider(modifier = Modifier.padding(horizontal = 16.dp))
                 }
 
             }
+
 
             if (showPlayerScreen) {
                 PlayerScreen(

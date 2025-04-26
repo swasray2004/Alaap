@@ -2,7 +2,9 @@
     <style name="Theme.MusicPlayer" parent="android:Theme.Material.Light.NoActionBar" />
 
     <style name="Theme.MusicPlayer.Splash" parent="Theme.SplashScreen">
-
+        <item name="windowSplashScreenBackground">@drawable/splash</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/empty_icon</item> <!-- disables center icon -->
+    <item name="postSplashScreenTheme">@style/Theme.MusicPlayer</item>
     </style>
 </resources>
 

@@ -15,15 +15,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.R
+import com.example.musicplayer.ui.components.BottomNavBar
 import com.example.musicplayer.ui.components.SongItem
+import com.example.musicplayer.ui.theme.Maroon30
 import com.example.musicplayer.ui.viewmodel.MusicViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     onNavigateUp: () -> Unit,
-    musicViewModel: MusicViewModel
+    musicViewModel: MusicViewModel,
+    navController: NavHostController = rememberNavController()
 ) {
     val searchQuery by musicViewModel.searchQuery.collectAsState()
     val searchResults by musicViewModel.searchResults.collectAsState()
@@ -37,9 +42,13 @@ fun SearchScreen(
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(Maroon30),
             )
-        }
+        },
+        bottomBar = {
+            BottomNavBar(navController = navController)
+        },
     ) { padding ->
 
         Box(modifier = Modifier

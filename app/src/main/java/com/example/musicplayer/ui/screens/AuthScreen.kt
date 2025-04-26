@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,10 +29,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.musicplayer.R
 import com.example.musicplayer.ui.viewmodel.AuthViewModel
 
 @Composable
@@ -43,6 +51,7 @@ fun AuthScreen(
     val currentUser by viewModel.currentUser.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedTabIndex by remember { mutableStateOf(0) }
+    val customFont = FontFamily(Font(R.font.babylonica))
 
     LaunchedEffect(currentUser) {
         if (currentUser != null) {
@@ -63,48 +72,65 @@ fun AuthScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
-        Column(
+
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Music Player",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(vertical = 32.dp)
+            // 🎨 Background image
+            androidx.compose.foundation.Image(
+                painter = painterResource(id = R.drawable.home),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop  // Important: Fill and crop nicely
             )
 
-            TabRow(selectedTabIndex = selectedTabIndex) {
-                Tab(
-                    selected = selectedTabIndex == 0,
-                    onClick = { selectedTabIndex = 0 },
-                    text = { Text("Sign In") }
-                )
-                Tab(
-                    selected = selectedTabIndex == 1,
-                    onClick = { selectedTabIndex = 1 },
-                    text = { Text("Sign Up") }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            when (selectedTabIndex) {
-                0 -> SignInForm(
-                    isLoading = authState is AuthViewModel.AuthState.Loading,
-                    onSignIn = { email, password ->
-                        viewModel.signIn(email, password)
-                    }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Alaap",
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontFamily = customFont,
+                    fontSize = 40.sp,
+                    modifier = Modifier.padding(vertical = 32.dp)
                 )
 
-                1 -> SignUpForm(
-                    isLoading = authState is AuthViewModel.AuthState.Loading,
-                    onSignUp = { email, password, displayName ->
-                        viewModel.signUp(email, password, displayName)
-                    }
-                )
+                TabRow(selectedTabIndex = selectedTabIndex) {
+                    Tab(
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 },
+                        text = { Text(text="Sign In", color = Color.White) }
+                    )
+                    Tab(
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 },
+                        text = { Text(text="Sign Up", color = Color.White) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                when (selectedTabIndex) {
+                    0 -> SignInForm(
+                        isLoading = authState is AuthViewModel.AuthState.Loading,
+                        onSignIn = { email, password ->
+                            viewModel.signIn(email, password)
+                        }
+                    )
+
+                    1 -> SignUpForm(
+                        isLoading = authState is AuthViewModel.AuthState.Loading,
+                        onSignUp = { email, password, displayName ->
+                            viewModel.signUp(email, password, displayName)
+                        }
+                    )
+                }
             }
         }
     }
@@ -127,7 +153,8 @@ fun SignInForm(
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+
         )
 
         OutlinedTextField(

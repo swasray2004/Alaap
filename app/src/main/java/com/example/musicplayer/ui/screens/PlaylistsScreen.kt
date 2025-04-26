@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,10 +34,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.R
 import com.example.musicplayer.data.model.Playlist
+import com.example.musicplayer.ui.components.BottomNavBar
 import com.example.musicplayer.ui.components.CreatePlaylistDialog
 import com.example.musicplayer.ui.components.MiniPlayer
+import com.example.musicplayer.ui.theme.Maroon30
 import com.example.musicplayer.ui.viewmodel.MusicViewModel
 import com.example.musicplayer.ui.viewmodel.PlaylistViewModel
 
@@ -46,7 +51,8 @@ fun PlaylistsScreen(
     onNavigateToPlaylist: (Long) -> Unit,
     onNavigateToPlayer: () -> Unit,
     playlistViewModel: PlaylistViewModel = hiltViewModel(),
-    musicViewModel: MusicViewModel = hiltViewModel()
+    musicViewModel: MusicViewModel = hiltViewModel(),
+            navController: NavHostController = rememberNavController()
 ) {
     val playlists by playlistViewModel.playlists.collectAsState()
     val currentSong by musicViewModel.currentSong.collectAsState()
@@ -59,7 +65,8 @@ fun PlaylistsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Your Playlists") }
+                title = { Text("Your Playlists") },
+                colors = TopAppBarDefaults.topAppBarColors(Maroon30),
             )
         },
         bottomBar = {
@@ -76,6 +83,7 @@ fun PlaylistsScreen(
                     musicViewModel = musicViewModel,
                 )
             }
+            BottomNavBar(navController = navController)
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { showCreatePlaylistDialog = true }) {

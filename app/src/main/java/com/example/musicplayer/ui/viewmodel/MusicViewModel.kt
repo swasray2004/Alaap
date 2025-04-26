@@ -1,8 +1,6 @@
 package com.example.musicplayer.ui.viewmodel
 
 import android.net.Uri
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SliderDefaults
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -12,6 +10,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.example.musicplayer.data.model.Song
 import com.example.musicplayer.data.repository.SongRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -168,7 +167,7 @@ class MusicViewModel @Inject constructor(
         viewModelScope.launch {
             while (true) {
                 updateProgress()
-                kotlinx.coroutines.delay(500)
+                delay(500)
             }
         }
     }
@@ -187,6 +186,13 @@ class MusicViewModel @Inject constructor(
         }
         player.seekTo(songIndex, 0L)
         player.prepare()
+        player.playWhenReady = true
+    }
+
+
+
+
+    fun play() {
         player.playWhenReady = true
     }
 

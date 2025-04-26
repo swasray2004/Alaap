@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.musicplayer.ui.theme.Maroon30
 import com.example.musicplayer.ui.viewmodel.AuthViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -95,7 +97,8 @@ fun ProfileScreen(
                     IconButton(onClick = { isEditing = !isEditing }) {
                         Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(Maroon30),
             )
         }
     ) { padding ->

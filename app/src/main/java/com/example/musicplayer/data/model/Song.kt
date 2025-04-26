@@ -1,11 +1,7 @@
 package com.example.musicplayer.data.model
 
-import android.net.Uri
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.versionedparcelable.ParcelField
-import androidx.versionedparcelable.VersionedParcelize
 
 enum class SongCategory {
     WHATSAPP_AUDIO,
@@ -26,5 +22,6 @@ data class Song(
     val isFavorite: Boolean = false,
     val playCount: Int = 0,
     val dateAdded: Long = System.currentTimeMillis(),
-    val category: SongCategory = SongCategory.OTHER
+    val category: SongCategory = SongCategory.OTHER,
+
 )

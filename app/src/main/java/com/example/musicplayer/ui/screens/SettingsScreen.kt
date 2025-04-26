@@ -27,17 +27,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.R
+import com.example.musicplayer.ui.components.BottomNavBar
+import com.example.musicplayer.ui.theme.Maroon30
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onNavigateUp: () -> Unit
+    onNavigateUp: () -> Unit,
+    navController: NavHostController = rememberNavController()
 ) {
     var darkMode by remember { mutableStateOf(true) }
     var highQualityPlayback by remember { mutableStateOf(false) }
@@ -54,8 +61,12 @@ fun SettingsScreen(
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(Maroon30),
             )
+
+        }, bottomBar = {
+            BottomNavBar(navController = navController)
         }
     ) { padding ->
 
@@ -152,7 +163,7 @@ fun SettingsSwitchItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
