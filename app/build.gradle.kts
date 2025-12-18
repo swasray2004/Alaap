@@ -102,7 +102,7 @@ dependencies {
 
     // Hilt for dependency injection - using KSP instead of kapt
     implementation("com.google.dagger:hilt-android:2.48")
-    ksp("com.google.dagger:hilt-android-compiler:2.48") // Changed from kapt to ksp
+    ksp("com.google.dagger:hilt-android-compiler:2.48") 
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Retrofit for network requests
