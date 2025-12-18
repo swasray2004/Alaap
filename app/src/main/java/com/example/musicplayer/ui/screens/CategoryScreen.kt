@@ -52,7 +52,6 @@ import com.example.musicplayer.ui.viewmodel.PlaylistViewModel
 fun CategoryScreen(
     category: SongCategory,
     categoryTitle: String,
-
     onNavigateUp: () -> Unit,
     onNavigateToPlayer: () -> Unit,
     musicViewModel: MusicViewModel = hiltViewModel(),

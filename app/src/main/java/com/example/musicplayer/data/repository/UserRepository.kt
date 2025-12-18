@@ -35,7 +35,7 @@ class UserRepository @Inject constructor(
 
             result.user?.updateProfile(profileUpdates)?.await()
 
-            // Save user to database
+
             val user = User(
                 uid = result.user?.uid ?: "",
                 email = email,
@@ -62,7 +62,7 @@ class UserRepository @Inject constructor(
 
             currentUser?.updateProfile(profileUpdates)?.await()
 
-            // Update in database
+
             val updates = mutableMapOf<String, Any>()
             displayName?.let { updates["displayName"] = it }
             photoUrl?.let { updates["photoUrl"] = it }

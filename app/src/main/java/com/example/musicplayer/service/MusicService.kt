@@ -313,7 +313,7 @@ class MusicService : MediaLibraryService() {
             }
         }
 
-        // If no action but player is playing, ensure notification is shown
+
         if (player.isPlaying) {
             startForeground(NOTIFICATION_ID, buildNotification())
         }

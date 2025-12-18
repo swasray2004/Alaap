@@ -118,7 +118,7 @@ fun HomeScreen(
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
 
-            // 🌄 Background Image
+
             Image(
                 painter = painterResource(id = R.drawable.home),
                 contentDescription = null,

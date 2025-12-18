@@ -78,7 +78,7 @@ fun AuthScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // 🎨 Background image
+
             androidx.compose.foundation.Image(
                 painter = painterResource(id = R.drawable.home),
                 contentDescription = null,

@@ -282,6 +282,8 @@ class MainActivity : ComponentActivity() {
                 onNavigateToPlayer = { navController.navigate("player") }
             )
         }
+
+
         composable("lastfm_screen") {
             LastFmSearchScreen(
                 onNavigateUp = { navController.navigateUp() },

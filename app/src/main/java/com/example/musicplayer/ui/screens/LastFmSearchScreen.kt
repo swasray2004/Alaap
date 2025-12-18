@@ -34,7 +34,7 @@ fun LastFmSearchScreen(
     onNavigateUp: () -> Unit,
     onNavigateToPlayer: () -> Unit,
     musicViewModel: MusicViewModel = viewModel(),
-            lastFmViewModel: LastFmViewModel = viewModel(),
+    lastFmViewModel: LastFmViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val tracks by lastFmViewModel.tracks.collectAsState()
@@ -60,7 +60,7 @@ fun LastFmSearchScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            // Background Image
+
             Image(
                 painter = painterResource(id = R.drawable.lastfm),
                 contentDescription = "Last.fm Background",

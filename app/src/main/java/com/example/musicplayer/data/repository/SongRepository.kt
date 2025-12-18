@@ -102,7 +102,7 @@ class SongRepository @Inject constructor(
                         albumId
                     )
 
-                    // Determine the category based on file path
+
                     val category = determineCategory(path)
 
                     val song = Song(
@@ -127,21 +127,21 @@ class SongRepository @Inject constructor(
 
     private fun determineCategory(path: String): SongCategory {
         return when {
-            // WhatsApp audio files are typically stored in WhatsApp/Media/WhatsApp Audio
+
             path.contains("WhatsApp/Media/WhatsApp Audio", ignoreCase = true) ||
                     path.contains(
                         "WhatsApp Audio",
                         ignoreCase = true
                     ) -> SongCategory.WHATSAPP_AUDIO
 
-            // Downloaded files are typically in the Download directory
+
             path.contains("/Download/", ignoreCase = true) ||
                     path.contains(
                         Environment.DIRECTORY_DOWNLOADS,
                         ignoreCase = true
                     ) -> SongCategory.DOWNLOADED
 
-            // Recorded audio files are typically in DCIM/Sound recordings or similar
+
             path.contains("/Recording", ignoreCase = true) ||
                     path.contains("/record", ignoreCase = true) ||
                     path.contains("/Voice Recorder", ignoreCase = true) ||
@@ -151,7 +151,7 @@ class SongRepository @Inject constructor(
                 ignoreCase = true
             ) -> SongCategory.RECORDED
 
-            // All other audio files
+
             else -> SongCategory.OTHER
         }
     }
